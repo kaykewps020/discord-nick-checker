@@ -29,10 +29,15 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Write proxies from secret
-        if: ${{ secrets.PROXY_LIST != '' }}
         env:
           PROXY_LIST: ${{ secrets.PROXY_LIST }}
-        run: echo "$PROXY_LIST" > proxies.txt
+        run: |
+          if [ -n "$PROXY_LIST" ]; then
+            echo "$PROXY_LIST" > proxies.txt
+            echo "✅ $(wc -l < proxies.txt) proxies"
+          else
+            echo "⚠ Sem proxies (rodando sem proxy)"
+          fi
 
       - name: Show checkpoint
         run: cat progress.json 2>/dev/null || echo "{}"
