@@ -1,0 +1,64 @@
+name: Nick Checker
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'   # a cada 4 horas
+  workflow_dispatch:          # manual
+  push:
+    paths:
+      - 'progress.json'      # roda quando progress muda
+
+permissions:
+  contents: write
+
+jobs:
+  check-nicks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350     # ~6 horas, max do free tier
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install deps
+        run: pip install aiohttp colorama
+      
+      - name: Write proxies from secret
+        if: env.PROXY_LIST != ''
+        env:
+          PROXY_LIST: ${{ secrets.PROXY_LIST }}
+        run: |
+          echo "$PROXY_LIST" > proxies.txt
+          PROXIES=$(wc -l < proxies.txt)
+          echo "✅ $PROXIES proxies carregados"
+      
+      - name: Show checkpoint
+        run: |
+          if [ -f progress.json ]; then
+            echo "📂 Checkpoint encontrado:"
+            cat progress.json
+          else
+            echo "🆕 Primeira execução — começando do início"
+          fi
+      
+      - name: Run checker (--resume)
+        run: python3 rare_nick_gen.py --resume
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          PROXY_LIST: ${{ secrets.PROXY_LIST }}
+      
+      - name: Commit progress
+        run: |
+          git config user.name "nick-checker[bot]"
+          git config user.email "nick-checker[bot]@users.noreply.github.com"
+          git add progress.json found_nicks/ 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "🤖 checkpoint: $(cat progress.json 2>/dev/null | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get("current_pattern","?"), "#"+str(d.get("checked_in_pattern",0)))')"
+          git push
