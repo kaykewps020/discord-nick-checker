@@ -26,7 +26,7 @@ jobs:
         run: pip install aiohttp colorama
 
       - name: Check proxies
-        run: echo "Proxies: $(wc -l < proxies.txt) linhas"
+        run: wc -l proxies.txt
 
       - name: Run checker
         run: python3 rare_nick_gen.py --resume
