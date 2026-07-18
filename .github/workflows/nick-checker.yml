@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: '0 */4 * * *'
   workflow_dispatch:
-  push:
-    paths:
-      - 'progress.json'
 
 permissions:
   contents: write
@@ -26,27 +23,15 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install aiohttp colorama
 
-      - name: Write proxies from secret
-        env:
-          PROXY_LIST: ${{ secrets.PROXY_LIST }}
-        run: |
-          if [ -n "$PROXY_LIST" ]; then
-            echo "$PROXY_LIST" > proxies.txt
-            echo "✅ $(wc -l < proxies.txt) proxies"
-          else
-            echo "⚠ Sem proxies (rodando sem proxy)"
-          fi
-
-      - name: Show checkpoint
-        run: cat progress.json 2>/dev/null || echo "{}"
+      - name: Check proxies
+        run: echo "Proxies: $(wc -l < proxies.txt) linhas"
 
       - name: Run checker
         run: python3 rare_nick_gen.py --resume
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          PROXY_LIST: ${{ secrets.PROXY_LIST }}
 
       - name: Commit progress
         run: |
