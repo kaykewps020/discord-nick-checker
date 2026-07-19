@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pyo
+*.txt
+!proxies.txt
+!found_nicks/*.txt
