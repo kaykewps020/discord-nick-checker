@@ -1,0 +1,65 @@
+name: Nick Checker — Parallel
+
+on:
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: 'Pattern to scan'
+        required: true
+        default: '3C'
+        type: choice
+        options:
+          - 3C
+          - 4L
+          - 4C
+      chunks:
+        description: 'Number of parallel jobs'
+        required: true
+        default: '50'
+        type: choice
+        options:
+          - '20'
+          - '30'
+          - '50'
+          - '80'
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        chunk: ${{ fromJson(format('[{0}]', join(range(0, fromJson(inputs.chunks)), ','))) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install aiohttp
+
+      - name: Run scanner
+        run: |
+          python3 github_scan.py \
+            --pattern ${{ inputs.pattern }} \
+            --chunk ${{ matrix.chunk }} \
+            --total-chunks ${{ inputs.chunks }}
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ inputs.pattern }}-chunk${{ matrix.chunk }}
+          path: found_nicks/
+          retention-days: 1
