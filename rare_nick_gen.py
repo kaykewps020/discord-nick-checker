@@ -200,6 +200,7 @@ class Checker:
         self.lock = asyncio.Lock()
         self.proxy_idx = 0
         self.webhook_url = CONFIG["webhook"]
+        self.no_proxy = len(proxies) == 0
         self.stats = {"checked": 0, "available": 0, "taken": 0, "errors": 0, "rate_limited": 0}
 
         # RATE LIMIT GLOBAL — todas as threads param quando uma toma 429
@@ -222,13 +223,17 @@ class Checker:
         }
 
     async def wait_for_rate_limit(self):
-        """Espera se tiver rate limit ativo"""
-        async with self.rate_limit_lock:
-            now = time.time()
-            if now < self.rate_limit_until:
+        """Espera se tiver rate limit ativo — sonda a cada 30s em vez de dormir tudo"""
+        while True:
+            async with self.rate_limit_lock:
+                now = time.time()
+                if now >= self.rate_limit_until:
+                    return  # cooldown acabou
                 wait_time = self.rate_limit_until - now
-                print(f"  {color('warn', f'RATE LIMIT GLOBAL — esperando {wait_time:.0f}s')}")
-                await asyncio.sleep(wait_time)
+            # Dorme no max 30s e checa de novo
+            sleep_time = min(wait_time, 30)
+            print(f"  {color('warn', f'RATE LIMIT — restam {wait_time:.0f}s, checando em {sleep_time:.0f}s...')}")
+            await asyncio.sleep(sleep_time)
 
     async def trigger_rate_limit(self, seconds):
         """Ativa rate limit global"""
@@ -335,19 +340,56 @@ class Checker:
 
         ci = lambda m: color('info', m)
         print("\n" + ci(f"▶ {label} — começando de #{start_index:,}/{total:,}"))
-        print(ci(f"  Restam: {len(combos_slice):,} | Proxies: {len(self.proxies)} | Threads: {CONFIG['max_concurrent']}"))
+
+        # Sem proxy: menos threads, delay entre batches
+        actual_threads = 3 if self.no_proxy else CONFIG["max_concurrent"]
+        batch_size = 5 if self.no_proxy else CONFIG["batch_size"]
+        inter_batch_delay = 3.0 if self.no_proxy else 0
+
+        print(ci(f"  Restam: {len(combos_slice):,} | Proxies: {len(self.proxies)} | Threads: {actual_threads}"))
         print("─" * 75)
 
         connector = aiohttp.TCPConnector(ssl=False, limit=0, ttl_dns_cache=300, keepalive_timeout=30)
-        start_time = time.time()
-        batch_count = 0
-        checked_since_save = 0
-        checked_since_git = 0
 
         async with aiohttp.ClientSession(connector=connector) as session:
             self.session = session
-            sem = asyncio.Semaphore(CONFIG["max_concurrent"])
-            batch_size = CONFIG["batch_size"]
+
+            # WARMUP: testa 1 request pra ver se ta liberado
+            print(f"  {color('info', 'Warmup: testando endpoint...')}")
+            warmup_ok = False
+            while not warmup_ok:
+                try:
+                    test_name = random.choice(string.ascii_lowercase)
+                    async with session.get(
+                        f"{ENDPOINT}?global_name={test_name}",
+                        headers=self.headers(),
+                        proxy=self.next_proxy() if self.proxies else None,
+                        timeout=aiohttp.ClientTimeout(total=10),
+                    ) as resp:
+                        if resp.status == 200:
+                            print(f"  {color('info', 'Endpoint liberado! Iniciando scan...')}")
+                            warmup_ok = True
+                        elif resp.status == 429:
+                            try:
+                                retry = (await resp.json()).get('retry_after', 5)
+                            except:
+                                retry = 5
+                            print(f"  {color('warn', f'429 no warmup! Retry after {retry:.0f}s — sondando a cada 30s...')}")
+                            # Seta o cooldown e deixa o wait_for_rate_limit cuidar
+                            await self.trigger_rate_limit(retry)
+                            await self.wait_for_rate_limit()
+                        else:
+                            print(f"  {color('warn', f'Status {resp.status} no warmup — tentando em 5s...')}")
+                            await asyncio.sleep(5)
+                except Exception as e:
+                    print(f"  {color('warn', f'Erro no warmup: {e} — tentando em 5s...')}")
+                    await asyncio.sleep(5)
+
+            start_time = time.time()
+            batch_count = 0
+            checked_since_save = 0
+            checked_since_git = 0
+            sem = asyncio.Semaphore(actual_threads)
             processed = 0
 
             for i in range(0, len(combos_slice), batch_size):
@@ -411,6 +453,10 @@ class Checker:
                     loop = asyncio.get_event_loop()
                     await loop.run_in_executor(None, git_commit_push, commit_msg)
 
+                # Delay entre batches sem proxy
+                if inter_batch_delay > 0:
+                    await asyncio.sleep(inter_batch_delay)
+
             self.session = None
 
         # Salva progresso final do padrão
@@ -455,7 +501,7 @@ def run_interactive():
     except:
         return []
 
-async def run_resume():
+async def run_resume(no_proxy=False):
     """Continua de onde parou"""
     progress = load_progress()
     current = progress.get("current_pattern", "1L")
@@ -466,8 +512,12 @@ async def run_resume():
     print(f"  Posição: #{start_idx:,}/{PADROES[current][1]:,}")
     print(f"  Último update: {progress.get('last_update', '?')}")
 
-    proxies = load_proxies()
-    print(f"  Proxies carregadas: {len(proxies)}")
+    if no_proxy:
+        proxies = []
+        print(f"  Proxies: DESATIVADO (--no-proxy)")
+    else:
+        proxies = load_proxies()
+        print(f"  Proxies carregadas: {len(proxies)}")
     checker = Checker(proxies)
 
     padroes = PADROES_ORDEM[PADROES_ORDEM.index(current):]
@@ -501,14 +551,18 @@ async def run_resume():
     print(f"  Total checks: {checker.stats['checked']:,}")
     print(f"  Encontrados: {checker.stats['available']:,}")
 
-async def run_pattern(pattern, start=0):
+async def run_pattern(pattern, start=0, no_proxy=False):
     """Roda um padrão específico"""
     if pattern not in PADROES:
         print(f"Padrão inválido: {pattern}")
         return
 
-    proxies = load_proxies()
-    print(f"  Proxies carregadas: {len(proxies)}")
+    if no_proxy:
+        proxies = []
+        print(f"  Proxies: DESATIVADO (--no-proxy)")
+    else:
+        proxies = load_proxies()
+        print(f"  Proxies carregadas: {len(proxies)}")
     checker = Checker(proxies)
 
     progress = {
@@ -537,6 +591,7 @@ def main():
     parser.add_argument("--resume", action="store_true", help="Continua de onde parou")
     parser.add_argument("--pattern", type=str, help="Padrão específico (1L, 2C, 3C, etc)")
     parser.add_argument("--start", type=int, default=0, help="Índice inicial (com --pattern)")
+    parser.add_argument("--no-proxy", action="store_true", help="Roda sem proxy (direto)")
     args = parser.parse_args()
 
     os.system('clear' if os.name == 'posix' else 'cls')
@@ -555,9 +610,9 @@ def main():
 
     try:
         if args.pattern:
-            asyncio.run(run_pattern(args.pattern, args.start))
+            asyncio.run(run_pattern(args.pattern, args.start, no_proxy=args.no_proxy))
         elif args.resume:
-            asyncio.run(run_resume())
+            asyncio.run(run_resume(no_proxy=args.no_proxy))
         else:
             # Modo interativo
             padroes = run_interactive()

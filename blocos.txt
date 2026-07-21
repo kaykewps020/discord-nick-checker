@@ -1,0 +1,89 @@
+a1b2 x7z9 k9p2 m3n4 v8w1 j4k8 q2w3 e5r6 t7y8 u9i0
+o1p2 a3s4 d5f6 g7h8 j9k0 l1z2 x3c4 v5b6 n7m8 q9w0
+e1r2 t3y4 u5i6 o7p8 a9s0 d1f2 g3h4 j5k6 l7z8 x9c0
+v1b2 n3m4 p5o6 i7u8 y9t0 r1e2 w3q4 z5x6 c7v8 b9n0
+m1k2 j3h4 g5f6 d7s8 a9p0 o1i2 u3y4 t5r6 e7w8 q9z0
+x1c2 v3b4 n5m6 k7j8 h9g0 f1d2 s3a4 p5o6 i7u8 y9t0
+r1e2 w3q4 l5k6 j7h8 g9f0 d1s2 a3p4 o5i6 u7y8 t9r0
+e1w2 q3z4 x5c6 v7b8 n9m0 a1x2 b3c4 d5e6 f7g8 h9i0
+j1k2 l3m4 n5o6 p7q8 r9s0 t1u2 v3w4 x5y6 z7a8 b9c0
+d1e2 f3g4 h5i6 j7k8 l9m0 n1o2 p3q4 r5s6 t7u8 v9w0
+x1y2 z3a4 b5c6 d7e8 f9g0 h1i2 j3k4 l5m6 n7o8 p9q0
+r1s2 t3u4 v5w6 x7y8 z9a0 k1m2 n3p4 q5r6 s7t8 u9v0
+w1x2 y3z4 a5c6 e7g8 i9k0 m1o2 q3s4 u5w6 y7a8 c9e0
+g1i2 k3m4 o5q6 s7u8 w9y0 b1d2 f3h4 j5l6 n7p8 r9t0
+v1x2 z3b4 d5f6 h7j8 l9n0 p1r2 t3v4 x5z6 a7d8 g9j0
+m1p2 s3v4 y5b6 e7h8 k9n0 q1t2 w3z4 c5f6 i7l8 o9r0
+u1x2 a3d4 g5j6 m7p8 s9v0 y1b2 e3h4 k5n6 q7t8 w9z0
+c1f2 i3l4 o5r6 u7x8 a9d0 g1j2 m3p4 s5v6 y7b8 e9h0
+k1n2 q3t4 w5z6 c7f8 i9l0 o1r2 u3x4 a5d6 g7j8 m9p0
+s1v2 y3b4 e5h6 k7n8 q9t0 w1z2 c3f4 i5l6 o7r8 u9x0 Bloco 2: Números Dominantes com Letras (201 – 400)
+
+1a2b 3c4d 5e6f 7g8h 9i0j 1k2l 3m4n 5o6p 7q8r 9s0t
+1u2v 3w4x 5y6z 7a8b 9c0d 1e2f 3g4h 5i6j 7k8l 9m0n
+1o2p 3q4r 5s6t 7u8v 9w0x 1y2z 3b4c 5d6e 7f8g 9h0i
+1j2k 3l4m 5n6o 7p8q 9r0s 1t2u 3v4w 5x6y 7z8a 9b0c
+1d2e 3f4g 5h6i 7j8k 9l0m 1n2o 3p4q 5r6s 7t8u 9v0w
+1x2y 3z4a 5b6c 7d8e 9f0g 1h2i 3j4k 5l6m 7n8o 9p0q
+1r2s 3t4u 5v6w 7x8y 9z0b 1c2d 3e4f 5g6h 7i8j 9k0l
+1m2n 3o4p 5q6r 7s8t 9u0v 1w2x 3y4z 5a6b 7c8d 9e0f
+8x9y 6z7a 4b5c 2d3e 0f1g 8h9i 6j7k 4l5m 2n3o 0p1q
+8r9s 6t7u 4v5w 2x3y 0z1a 8b9c 6d7e 4f5g 2h3i 0j1k
+8l9m 6n7o 4p5q 2r3s 0t1u 8v9w 6x7y 4z5a 2b3c 0d1e
+8f9g 6h7i 4j5k 2l3m 0n1o 8p9q 6r7s 4t5u 2v3w 0x1y
+8z9a 6b7c 4d5e 2f3g 0h1i 8j9k 6l7m 4n5o 2p3q 0r1s
+8t9u 6v7w 4x5y 2z3a 0b1c 8d9e 6f7g 4h5i 2j3k 0l1m
+8n9o 6p7q 4r5s 2t3u 0v1w 8x9y 6z7a 4b5c 2d3e 0f1g
+8h9i 6j7k 4l5m 2n3o 0p1q 8r9s 6t7u 4v5w 2x3y 0z1a
+9a8b 7c6d 5e4f 3g2h 1i0j 9k8l 7m6n 5o4p 3q2r 1s0t
+9u8v 7w6x 5y4z 3a2b 1c0d 9e8f 7g6h 5i4j 3k2l 1m0n
+9o8p 7q6r 5s4t 3u2v 1w0x 9y8z 7b6c 5d4e 3f2g 1h0i
+9j8k 7l6m 5n4o 3p2q 1r0s 9t8u 7v6w 5x4y 3z2a 1b0c Bloco 3: Alternados & Híbridos (Letra-Número-Letra-Número e vice-versa) (401 – 600)
+
+a1b2 c3d4 e5f6 g7h8 i9j0 k1l2 m3n4 o5p6 q7r8 s9t0
+u1v2 w3x4 y5z6 a7b8 c9d0 e1f2 g3h4 i5j6 k7l8 m9n0
+o1p2 q3r4 s5t6 u7v8 w9x0 y1z2 b3c4 d5e6 f7g8 h9i0
+j1k2 l3m4 n5o6 p7q8 r9s0 t1u2 v3w4 x5y6 z7a8 b9c0
+1a2b 3c4d 5e6f 7g8h 9i0j 1k2l 3m4n 5o6p 7q8r 9s0t
+1u2v 3w4x 5y6z 7a8b 9c0d 1e2f 3g4h 5i6j 7k8l 9m0n
+1o2p 3q4r 5s6t 7u8v 9w0x 1y2z 3b4c 5d6e 7f8g 9h0i
+1j2k 3l4m 5n6o 7p8q 9r0s 1t2u 3v4w 5x6y 7z8a 9b0c
+z9y8 x7w6 v5u4 t3s2 r1q0 p9o8 n7m6 l5k4 j3i2 h1g0
+f9e8 d7c6 b5a4 z3y2 x1w0 v9u8 t7s6 r5q4 p3o2 n1m0
+l9k8 j7i6 h5g4 f3e2 d1c0 b9a8 z7y6 x5w4 v3u2 t1s0
+r9q8 p7o6 n5m4 l3k2 j1i0 h9g8 f7e6 d5c4 b3a2 z1y0
+x9w8 v7u6 t5s4 r3q2 p1o0 n9m8 l7k6 j5i4 h3g2 f1e0
+d9c8 b7a6 z5y4 x3w2 v1u0 t9s8 r7q6 p5o4 n3m2 l1k0
+j9i8 h7g6 f5e4 d3c2 b1a0 z9y8 x7w6 v5u4 t3s2 r1q0
+p9o8 n7m6 l5k4 j3i2 h1g0 f9e8 d7c6 b5a4 z3y2 x1w0
+k9j8 h7g6 f5e4 d3c2 b1a0 z9y8 x7w6 v5u4 t3s2 r1q0
+p9o8 n7m6 l5k4 j3i2 h1g0 f9e8 d7c6 b5a4 z3y2 x1w0
+v9u8 t7s6 r5q4 p3o2 n1m0 l9k8 j7i6 h5g4 f3e2 d1c0
+b9a8 z7y6 x5w4 v3u2 t1s0 r9q8 p7o6 n5m4 l3k2 j1i0 Bloco 4: Alta Entropia & Caótico (Sopa de Letras e Números) (601 – 800)
+
+9x2k f7m1 3p8v z0w4 l5r9 2b6q t1y7 8h3j k0n4 u9c2
+7v1m x4p8 3z0q w5r2 b9t6 1y7k h3j0 n8u4 c2f9 m1x7
+p4z8 q0w3 r5b9 t2y6 k7h1 j3n0 u8c4 f2m9 x1p7 z4q8
+w0r3 b5t9 y2k6 h7j1 n3u0 c8f4 m2x9 p1z7 q4w8 r0b3
+t5y9 k2h6 j7n1 u3c0 f8m4 x2p9 z1q7 w4r8 b0t3 y5k9
+h2j6 n7u1 c3f0 m8x4 p2z9 q1w7 r4b8 t0y3 k5h9 j2n6
+u7c1 f3m0 x8p4 z2q9 w1r7 b4t8 y0k3 h5j9 n2u6 c7f1
+m3x0 p8z4 q2w9 r1b7 t4y8 k0h3 j5n9 u2c6 f7m1 x3p0
+z8q4 w2r9 b1t7 y4k8 h0j3 n5u9 c2f6 m7x1 p3z0 q8w4
+r2b9 t1y7 k4h8 j0n3 u5c9 f2m6 x7p1 z3q0 w8r4 b2t9
+y1k7 h4j8 n0u3 c5f9 m2x6 p7z1 q3w0 r8b4 t2y9 k1h7
+j4n8 u0c3 f5m9 x2p6 z7q1 w3r0 b8t4 y2k9 h1j7 n4u8
+c0f3 m5x9 p2z6 q7w1 r3b0 t8y4 k2h9 j1n7 u4c8 f0m3
+x5p9 z2q6 w7r1 b3t0 y8k4 h2j9 n1u7 c4f8 m0x3 p5z9
+q2w6 r7b1 t3y0 k8h4 j2n9 u1c7 f4m8 x0p3 z5q9 w2r6
+b7t1 y3k0 h8j4 n2u9 c1f7 m4x8 p0z3 q5w9 r2b6 t7y1
+k3h0 j8n4 u2c9 f1m7 x4p8 z0q3 w5r9 b2t6 y7k1 h3j0
+n8u4 c2f9 m1x7 p4z0 q8w4 r2b9 t1y7 k4h0 j8n4 u2c9
+f1m7 x4p8 z0q3 w5r9 b2t6 y7k1 h3j0 n8u4 c2f9 m1x7
+p4z0 q8w4 r2b9 t1y7 k4h0 j8n4 u2c9 f1m7 x4p8 z0q3 Bloco 5: Ultra-Aleatório Final (801 – 1000)
+
+7k9p 2m8v x4z0 w1q5 b3r7 t9y2 h6j0 n4u8 c1f5 m3x7
+p9z2 q6w0 r4b8 t1y5 k3h7 j9n2 u6c0 f4m8 x1p5 z3q7
+w9r2 b6t0 y4k8 h1j5 n3u7 c9f2 m6x0 p4z8 q1w5 r3b7
+t9y2 k6h0 j4n8 u1c5 f3m7 x9p2 z6q0 w4r8 b1t5 y3k7
+h9j2 n6u0 c4f8 m1x5 p3z7 q9w2 r6b0 t4y8 k1h5 

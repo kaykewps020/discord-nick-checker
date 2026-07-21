@@ -1,0 +1,33 @@
+name: Nick Checker Bot
+
+on:
+  workflow_dispatch:  # manual trigger
+  push:
+    branches: [main]
+    paths:
+      - 'blocos.txt'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 59
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: pip install discord.py aiohttp
+
+      - name: Run Bot
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          echo "Starting nick checker bot..."
+          python -u bot.py

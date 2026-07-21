@@ -3,4 +3,7 @@ __pycache__/
 *.pyo
 *.txt
 !proxies.txt
+!blocos.txt
 !found_nicks/*.txt
+bot_progress.json
+*.log
