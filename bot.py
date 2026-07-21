@@ -35,10 +35,10 @@ UAS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
 ]
 
-MAX_CONCURRENT = 5
-CHECK_DELAY = 0.35
-COOLDOWN_THRESHOLD = 8
-COOLDOWN_WAIT = 30
+MAX_CONCURRENT = 1
+CHECK_DELAY = 1.8
+COOLDOWN_THRESHOLD = 3
+COOLDOWN_WAIT = 45
 
 # ─── CHANNEL MAP ──────────────────────────────────────────────────
 PATTERN_MAP = {
@@ -176,7 +176,7 @@ async def check_pattern(
     print(f"{'='*55}")
 
     sem = asyncio.Semaphore(MAX_CONCURRENT)
-    batch_size = 20
+    batch_size = 10
 
     for batch_start in range(0, len(remaining), batch_size):
         batch = remaining[batch_start : batch_start + batch_size]
@@ -189,6 +189,7 @@ async def check_pattern(
             done += 1
 
             if r["status"] == "ok":
+                rate_limit_count = 0
                 if r["available"]:
                     found += 1
                     print(f"  ✅ @{nick} DISPONIVEL!")
@@ -198,30 +199,27 @@ async def check_pattern(
                     taken += 1
                     print(f"  ✗ @{nick}")
 
-            elif r["status"] == "429":
+            el            if r["status"] == "429":
                 rate_limit_count += 1
                 retry = r.get("retry_after", 30)
+                wait = max(retry, COOLDOWN_WAIT) if rate_limit_count >= COOLDOWN_THRESHOLD else min(retry, 10)
                 if rate_limit_count >= COOLDOWN_THRESHOLD:
-                    wait = min(retry, COOLDOWN_WAIT)
-                    print(f"  ⏳ COOLDOWN {wait:.0f}s (muitos 429)")
+                    print(f"  ⏳ COOLDOWN {wait:.0f}s (retry_after={retry:.0f}s)")
                     await send_webhook(session, f"⏳ `{pattern_name}` cooldown {wait:.0f}s")
-                    await asyncio.sleep(wait)
-                    rate_limit_count = 0
-                else:
-                    await asyncio.sleep(min(retry, 5))
+                await asyncio.sleep(wait)
             else:
                 errors += 1
                 print(f"  ⚠ @{nick} ERRO: {r.get('code', r.get('error', '?'))}")
 
         # Progress every batch
         elapsed = time.time() - start_time
-        rate = (done - len(checked_set) + len(batch)) / elapsed if elapsed > 0 else 0
+        rate = done / elapsed if elapsed > 0 else 0
         pct = done / total * 100
         eta_s = ((total - done) / rate) if rate > 0 else 0
         eta_m = eta_s / 60
 
-        if (batch_start // batch_size) % 5 == 0 or batch_start + batch_size >= len(remaining):
-            print(f"\n  📊 [{done}/{total}] {pct:.1f}% | ✅{found} ✗{taken} ⚠{errors} | {rate:.1f}/s | ETA: {eta_m:.0f}min\n")
+        if (batch_start // batch_size) % 10 == 0 or batch_start + batch_size >= len(remaining):
+            print(f"\n  📊 [{done}/{total}] {pct:.1f}% | ✅{found} ✗{taken} ⚠{errors} | {rate:.2f}/s | ETA: {eta_m:.0f}min\n")
 
         progress[key] = list(checked_set)
         save_progress(progress)
