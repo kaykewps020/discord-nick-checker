@@ -22,7 +22,7 @@ import random
 # ─── CONFIG ───────────────────────────────────────────────────────
 BLOCOS_FILE = os.environ.get("BLOCOS_FILE", "blocos.txt")
 PROGRESS_FILE = os.environ.get("PROGRESS_FILE", "bot_progress.json")
-GUILD_ID = int(os.environ.get("GUILD_ID", "1527537041464885279"))  # V&T server
+GUILD_ID = int(os.environ.get("GUILD_ID", "1526764581727502346"))  # V&T server
 WEBHOOK_URL = os.environ.get(
     "DISCORD_WEBHOOK",
     "https://discord.com/api/webhooks/1526764679492538551/HdM8nuu-iV_tnW7BxbETQ-NI5G4auG7wHhkfeMuFoL5lqUPksEqfYwRiJf7HJuI3s3ng",
@@ -199,7 +199,7 @@ async def check_pattern(
                     taken += 1
                     print(f"  ✗ @{nick}")
 
-            el            if r["status"] == "429":
+            elif r["status"] == "429":
                 rate_limit_count += 1
                 retry = r.get("retry_after", 30)
                 wait = max(retry, COOLDOWN_WAIT) if rate_limit_count >= COOLDOWN_THRESHOLD else min(retry, 10)
