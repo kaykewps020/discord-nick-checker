@@ -19,21 +19,32 @@ on:
         type: choice
         options:
           - '20'
-          - '30'
           - '50'
-          - '80'
 
 permissions:
   contents: write
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+    steps:
+      - id: gen
+        run: |
+          N=${{ inputs.chunks }}
+          ARR=$(python3 -c "print(list(range($N)))")
+          echo "matrix={\"chunk\":$ARR}" >> "$GITHUB_OUTPUT"
+          echo "Generated matrix: $ARR"
+
   scan:
+    needs: setup
     runs-on: ubuntu-latest
     timeout-minutes: 340
     strategy:
       fail-fast: false
-      matrix:
-        chunk: ${{ fromJson(format('[{0}]', join(range(0, fromJson(inputs.chunks)), ','))) }}
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
 
     steps:
       - name: Checkout
